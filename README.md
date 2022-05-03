@@ -1,3 +1,4 @@
 # pop! JS
-A small lightweight framework for easy, fast and reactive frontend development.
-#### Author: Abiram Nair
+#### To-Do
+- component unique state management
+- rendering nested components
