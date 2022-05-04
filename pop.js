@@ -9,11 +9,28 @@ export const POP = {
 				children: elementChildren,
 			};
 		}
-		return;
 	},
 	use: (popComponent, componentChildren = [], componentProps = {}) => {
 		if (popComponent.render) {
-			const rendered = popComponent.render({ props: { ...componentProps } });
+			let componentState = {};
+			if (popComponent.set && componentProps.stateKey) {
+				if (!dom.state[componentProps.stateKey]) {
+					dom.state[componentProps.stateKey] = {};
+					popComponent.set(dom.state[componentProps.stateKey]);
+					componentState = dom.state[componentProps.stateKey];
+				} else {
+					componentState = dom.state[componentProps.stateKey];
+				}
+			}
+			if (popComponent.set && !componentProps.stateKey) {
+				throw new Error(
+					"stateKey must be passed inside props argument for a popComponent utilizing state."
+				);
+			}
+			const rendered = popComponent.render({
+				props: { ...componentProps },
+				state: componentState,
+			});
 			const children = rendered.children;
 			let parent;
 
@@ -25,7 +42,7 @@ export const POP = {
 					});
 				}
 			} else {
-				parent = POP.use(rendered.tag, componentChildren, {});
+				parent = POP.use(rendered.tag, componentChildren);
 				children.forEach((child) => {
 					parent.children.push(child);
 				});
@@ -38,18 +55,22 @@ export const POP = {
 			return parent;
 		}
 	},
-	root: (popComponent) => {
+	refresh: () => {
+		const newTree = dom.renderFn();
+		dom.updateElement(dom.root, newTree, dom.prevTree);
+		dom.prevTree = newTree;
+	},
+	root: (popComponent, rootName) => {
 		const root = document.createElement("div");
-		root.id = "root";
+		root.id = rootName && typeof rootName === "string" ? rootName : "root";
 		document.body.appendChild(root);
 		dom.root = root;
+		dom.state = {};
 		dom.prevTree = popComponent.render();
 		dom.renderFn = popComponent.render;
 		dom.updateElement(root, dom.prevTree);
 		root.addEventListener("click", () => {
-			const newTree = dom.renderFn();
-			dom.updateElement(root, newTree, dom.prevTree);
-			dom.prevTree = newTree;
+			POP.refresh();
 		});
 	},
 };

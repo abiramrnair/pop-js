@@ -3,10 +3,8 @@ export const dom = {
 		if (typeof popObject === "string") {
 			return document.createTextNode(popObject);
 		}
-
 		const parentArgs = popObject.tag.split("|");
 		const parent = document.createElement(parentArgs[0]);
-
 		if (parentArgs[1]) {
 			if (parentArgs[1].includes("class=")) {
 				parent.className = parentArgs[1].split("=")[1];
