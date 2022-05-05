@@ -1,8 +1,9 @@
-import dom from "./dom-module";
+import constants from "./modules/constants-module";
+import dom from "./modules/dom-module";
 
 export const POP = {
 	create: (elementTag, elementChildren = [], elementProps = {}) => {
-		if (typeof elementTag === "string") {
+		if (typeof elementTag === constants.createPOPElementTagType) {
 			return {
 				tag: elementTag,
 				props: elementProps,
@@ -23,10 +24,9 @@ export const POP = {
 				}
 			}
 			if (popComponent.set && !componentProps.stateKey) {
-				throw new Error(
-					"stateKey must be passed inside props argument for a popComponent utilizing state."
-				);
+				throw new Error(constants.stateKeyMissingError);
 			}
+			delete componentProps.stateKey;
 			const rendered = popComponent.render({
 				props: { ...componentProps },
 				state: componentState,
@@ -61,15 +61,18 @@ export const POP = {
 		dom.prevTree = newTree;
 	},
 	root: (popComponent, rootName) => {
-		const root = document.createElement("div");
-		root.id = rootName && typeof rootName === "string" ? rootName : "root";
+		const root = document.createElement(constants.createRootElementTag);
+		root.id =
+			rootName && typeof rootName === constants.createPOPElementTagType
+				? rootName
+				: constants.createRootElementDefaultId;
 		document.body.appendChild(root);
 		dom.root = root;
 		dom.state = {};
 		dom.prevTree = popComponent.render();
 		dom.renderFn = popComponent.render;
 		dom.updateElement(root, dom.prevTree);
-		root.addEventListener("click", () => {
+		root.addEventListener(constants.refreshDOMDefaultAction, () => {
 			POP.refresh();
 		});
 	},

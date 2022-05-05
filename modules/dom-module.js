@@ -1,22 +1,32 @@
+import constants from "./constants-module";
+
 export const dom = {
 	generateElement: (popObject) => {
-		if (typeof popObject === "string") {
+		if (typeof popObject === constants.createPOPElementTagType) {
 			return document.createTextNode(popObject);
 		}
-		const parentArgs = popObject.tag.split("|");
+		const parentArgs = popObject.tag.split(constants.popObjectTagSeparator);
 		const parent = document.createElement(parentArgs[0]);
 		if (parentArgs[1]) {
-			if (parentArgs[1].includes("class=")) {
-				parent.className = parentArgs[1].split("=")[1];
-			} else if (parentArgs[1].includes("id=")) {
-				parent.id = parentArgs[1].split("=")[1];
+			if (parentArgs[1].includes(constants.popElementClassIdentifier)) {
+				parent.className = parentArgs[1].split(
+					constants.popElementAttributeSeparator
+				)[1];
+			} else if (parentArgs[1].includes(constants.popElementIdIdentifier)) {
+				parent.id = parentArgs[1].split(
+					constants.popElementAttributeSeparator
+				)[1];
 			}
 		}
 		if (parentArgs[2]) {
-			if (parentArgs[2].includes("class=")) {
-				parent.className = parentArgs[2].split("=")[1];
-			} else if (parentArgs[2].includes("id=")) {
-				parent.id = parentArgs[2].split("=")[1];
+			if (parentArgs[2].includes(constants.popElementClassIdentifier)) {
+				parent.className = parentArgs[2].split(
+					constants.popElementAttributeSeparator
+				)[1];
+			} else if (parentArgs[2].includes(constants.popElementIdIdentifier)) {
+				parent.id = parentArgs[2].split(
+					constants.popElementAttributeSeparator
+				)[1];
 			}
 		}
 		Object.keys(popObject.props).forEach((key) => {
@@ -31,7 +41,8 @@ export const dom = {
 	compareElements: (popNodeOne, popeNodeTwo) => {
 		return (
 			typeof popNodeOne !== typeof popeNodeTwo ||
-			(typeof popNodeOne === "string" && popNodeOne !== popeNodeTwo) ||
+			(typeof popNodeOne === constants.createPOPElementTagType &&
+				popNodeOne !== popeNodeTwo) ||
 			popNodeOne.tag !== popeNodeTwo.tag
 		);
 	},
