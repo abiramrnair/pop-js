@@ -6,12 +6,41 @@ export const POP = {
 		if (typeof elementTag === constants.createPOPElementTagType) {
 			return {
 				tag: elementTag,
-				props: elementProps,
-				children: elementChildren,
+				props:
+					!Object.keys(elementProps).length &&
+					!Array.isArray(elementChildren) &&
+					Object.keys(elementChildren).length
+						? elementChildren
+						: elementProps,
+				children:
+					!Array.isArray(elementChildren) &&
+					Array.isArray(elementProps) &&
+					elementProps.length
+						? elementProps
+						: elementChildren,
 			};
 		}
 	},
-	use: (popComponent, componentChildren = [], componentProps = {}) => {
+	getState: (stateKey) => {
+		if (dom.state[stateKey]) {
+			const state = { ...dom.state[stateKey] };
+			return state;
+		}
+		throw new Error(constants.stateKeyInvalidError);
+	},
+	use: (popComponent, popComponentChildren = [], popComponentProps = {}) => {
+		const componentChildren =
+			!Array.isArray(popComponentChildren) &&
+			Array.isArray(popComponentProps) &&
+			popComponentProps.length
+				? popComponentProps
+				: popComponentChildren;
+		const componentProps =
+			!Object.keys(popComponentProps).length &&
+			!Array.isArray(popComponentChildren) &&
+			Object.keys(popComponentChildren).length
+				? popComponentChildren
+				: popComponentProps;
 		if (popComponent.render) {
 			let componentState = {};
 			if (popComponent.set && componentProps.stateKey) {

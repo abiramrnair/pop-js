@@ -7,6 +7,7 @@ export const constants = {
 	popElementIdIdentifier: "id=",
 	popObjectTagSeparator: "|",
 	refreshDOMDefaultAction: "click",
+	stateKeyInvalidError: "stateKey must be a valid existing key",
 	stateKeyMissingError:
 		"stateKey must be passed inside props argument for a popComponent utilizing state.",
 };
