@@ -1,5 +1,5 @@
 {
-	"name": "pop-js",
+	"name": "sonpop-js",
 	"version": "1.0.0",
 	"description": "A small lightweight framework for easy, fast and reactive frontend development.",
 	"main": "pop.js",
@@ -11,7 +11,8 @@
 		"javascript",
 		"reactive",
 		"frontend",
-		"javascript-framework"
+		"javascript-framework",
+		"stateful"
 	],
 	"author": "Abiram Nair",
 	"license": "MIT",
