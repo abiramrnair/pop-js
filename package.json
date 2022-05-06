@@ -2,6 +2,7 @@
 	"name": "pop-js",
 	"version": "1.0.0",
 	"description": "A small lightweight framework for easy, fast and reactive frontend development.",
+	"main": "pop.js",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/abiramrnair/pop-js.git"
