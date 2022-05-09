@@ -22,11 +22,14 @@ export const POP = {
 		}
 	},
 	getState: (stateKey) => {
+		if (!stateKey) {
+			throw new Error(constants.stateKeyInvalidError);
+		}
 		if (dom.state[stateKey]) {
 			const state = { ...dom.state[stateKey] };
 			return state;
 		}
-		throw new Error(constants.stateKeyInvalidError);
+		return {};
 	},
 	use: (popComponent, popComponentChildren = [], popComponentProps = {}) => {
 		const componentChildren =
@@ -89,7 +92,8 @@ export const POP = {
 		dom.updateElement(dom.root, newTree, dom.prevTree);
 		dom.prevTree = newTree;
 	},
-	root: (popComponent, rootName) => {
+	root: (popComponent, rootProps) => {
+		const { rootName, stateKey, componentProps } = rootProps;
 		const root = document.createElement(constants.createRootElementTag);
 		root.id =
 			rootName && typeof rootName === constants.createPOPElementTagType
@@ -98,8 +102,25 @@ export const POP = {
 		document.body.appendChild(root);
 		dom.root = root;
 		dom.state = {};
-		dom.prevTree = popComponent.render();
-		dom.renderFn = popComponent.render;
+		let componentState = {};
+		if (popComponent.set && stateKey) {
+			if (!dom.state[stateKey]) {
+				dom.state[stateKey] = {};
+				popComponent.set(dom.state[stateKey]);
+				componentState = dom.state[stateKey];
+			} else {
+				componentState = dom.state[stateKey];
+			}
+		}
+		dom.prevTree = popComponent.render({
+			props: { ...componentProps },
+			state: componentState,
+		});
+		dom.renderFn = () =>
+			popComponent.render({
+				props: { ...componentProps },
+				state: componentState,
+			});
 		dom.updateElement(root, dom.prevTree);
 		root.addEventListener(constants.refreshDOMDefaultAction, () => {
 			POP.refresh();

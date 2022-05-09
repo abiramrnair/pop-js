@@ -32,10 +32,11 @@ export const dom = {
 		Object.keys(popObject.props).forEach((key) => {
 			parent[key] = popObject.props[key];
 		});
-		popObject.children
-			.map(dom.generateElement)
-			.forEach((node) => parent.appendChild(node));
-
+		if (Array.isArray(popObject.children)) {
+			popObject.children
+				.map(dom.generateElement)
+				.forEach((node) => parent.appendChild(node));
+		}
 		return parent;
 	},
 	compareElements: (popNodeOne, popeNodeTwo) => {
@@ -43,7 +44,10 @@ export const dom = {
 			typeof popNodeOne !== typeof popeNodeTwo ||
 			(typeof popNodeOne === constants.createPOPElementTagType &&
 				popNodeOne !== popeNodeTwo) ||
-			popNodeOne.tag !== popeNodeTwo.tag
+			popNodeOne.tag !== popeNodeTwo.tag ||
+			(popNodeOne.props &&
+				popeNodeTwo.props &&
+				popNodeOne.props.src !== popeNodeTwo.props.src)
 		);
 	},
 	updateElement: (parentNode, newNode, oldNode, index = 0) => {
