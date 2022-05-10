@@ -5,7 +5,7 @@
 - component-specific state
 - global state access
 - efficient and reactive element rendering
-- manual re-render function more user control
+- manual re-render function for more user control
 ### npm
 This package is available at https://www.npmjs.com/package/sonpop-js.<br>
 and can be installed via **<< npm i sonpop-js >>**.<br>
