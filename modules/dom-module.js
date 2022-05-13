@@ -89,15 +89,18 @@ export const dom = {
 		}
 	},
 	filterValidPopObjects: (domTree) => {
-		const treeChildren = domTree.children.filter(
-			(child) => child && Object.keys(child).length
-		);
-		treeChildren.forEach((obj) => {
-			if (obj && obj.children) {
-				obj.children = dom.filterValidPopObjects(obj);
-			}
-		});
-		return treeChildren;
+		if (domTree.children && Array.isArray(domTree.children)) {
+			const treeChildren = domTree.children.filter(
+				(child) => child && Object.keys(child).length
+			);
+			treeChildren.forEach((obj) => {
+				if (obj && obj.children) {
+					obj.children = dom.filterValidPopObjects(obj);
+				}
+			});
+			return treeChildren;
+		}
+		return [];
 	},
 };
 
