@@ -105,7 +105,7 @@ export const POP = {
 		dom.root = root;
 		dom.state = {};
 		dom.initializeState(popComponent, stateKey);
-		const componentState = POP.getState(stateKey);
+		const componentState = stateKey ? POP.getState(stateKey) : {};
 		dom.prevTree = popComponent.render({
 			props: { ...componentProps },
 			state: componentState,
