@@ -13,3 +13,5 @@ and can be installed via **<< npm i sonpop-js >>**.<br>
 If you would like get something running as fast as possible <br>
 with file structure and webpack configured, the **demo-pop-app** repository <br>
 is available to be cloned at https://github.com/abiramrnair/demo-pop-app. <br>
+### Documentation
+A guide for pop! JS and documentation is available at https://abiramrnair.github.io/pop-js/.
