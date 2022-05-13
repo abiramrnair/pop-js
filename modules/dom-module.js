@@ -90,7 +90,7 @@ export const dom = {
 	},
 	filterValidPopObjects: (domTree) => {
 		const treeChildren = domTree.children.filter(
-			(child) => Object.keys(child).length
+			(child) => child && Object.keys(child).length
 		);
 		treeChildren.forEach((obj) => {
 			if (obj && obj.children) {
