@@ -7,15 +7,11 @@ export const POP = {
 			return {
 				tag: elementTag,
 				props:
-					!Object.keys(elementProps).length &&
-					!Array.isArray(elementChildren) &&
-					Object.keys(elementChildren).length
+					!Array.isArray(elementChildren) && Array.isArray(elementProps)
 						? elementChildren
 						: elementProps,
 				children:
-					!Array.isArray(elementChildren) &&
-					Array.isArray(elementProps) &&
-					elementProps.length
+					Array.isArray(elementProps) && !Array.isArray(elementChildren)
 						? elementProps
 						: elementChildren,
 			};
