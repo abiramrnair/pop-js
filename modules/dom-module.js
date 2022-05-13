@@ -73,6 +73,32 @@ export const dom = {
 			}
 		}
 	},
+	initializeState: (popComponent, stateKey) => {
+		if (popComponent.render && popComponent.set && stateKey) {
+			if (!dom.state[stateKey]) {
+				dom.state[stateKey] = {};
+				popComponent.set(dom.state[stateKey]);
+			}
+			popComponent
+				.render({ props: {}, state: {} })
+				.children.forEach((child) => {
+					if (child) {
+						dom.initializeState(child, child.stateKey);
+					}
+				});
+		}
+	},
+	filterValidPopObjects: (domTree) => {
+		const treeChildren = domTree.children.filter(
+			(child) => Object.keys(child).length
+		);
+		treeChildren.forEach((obj) => {
+			if (obj && obj.children) {
+				obj.children = dom.filterValidPopObjects(obj);
+			}
+		});
+		return treeChildren;
+	},
 };
 
 export default dom;

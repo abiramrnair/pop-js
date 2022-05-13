@@ -45,8 +45,11 @@ export const POP = {
 				? popComponentChildren
 				: popComponentProps;
 		if (popComponent.render) {
+			let parent = {};
 			let componentState = {};
 			if (popComponent.set && componentProps.stateKey) {
+				parent.set = popComponent.set;
+				parent.stateKey = componentProps.stateKey;
 				if (!dom.state[componentProps.stateKey]) {
 					dom.state[componentProps.stateKey] = {};
 					popComponent.set(dom.state[componentProps.stateKey]);
@@ -64,10 +67,9 @@ export const POP = {
 				state: componentState,
 			});
 			const children = rendered.children;
-			let parent;
 
 			if (!rendered.tag.render) {
-				parent = rendered;
+				parent = { ...parent, ...rendered };
 				if (componentChildren && componentChildren.length) {
 					componentChildren.forEach((child) => {
 						parent.children.push(child);
@@ -89,6 +91,7 @@ export const POP = {
 	},
 	refresh: () => {
 		const newTree = dom.renderFn();
+		newTree.children = dom.filterValidPopObjects(newTree);
 		dom.updateElement(dom.root, newTree, dom.prevTree);
 		dom.prevTree = newTree;
 	},
@@ -102,20 +105,13 @@ export const POP = {
 		document.body.appendChild(root);
 		dom.root = root;
 		dom.state = {};
-		let componentState = {};
-		if (popComponent.set && stateKey) {
-			if (!dom.state[stateKey]) {
-				dom.state[stateKey] = {};
-				popComponent.set(dom.state[stateKey]);
-				componentState = dom.state[stateKey];
-			} else {
-				componentState = dom.state[stateKey];
-			}
-		}
+		dom.initializeState(popComponent, stateKey);
+		const componentState = POP.getState(stateKey);
 		dom.prevTree = popComponent.render({
 			props: { ...componentProps },
 			state: componentState,
 		});
+		dom.prevTree.children = dom.filterValidPopObjects(dom.prevTree);
 		dom.renderFn = () =>
 			popComponent.render({
 				props: { ...componentProps },
