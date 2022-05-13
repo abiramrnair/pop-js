@@ -67,7 +67,6 @@ export const POP = {
 				state: componentState,
 			});
 			const children = rendered.children;
-
 			if (!rendered.tag.render) {
 				parent = { ...parent, ...rendered };
 				if (componentChildren && componentChildren.length) {
