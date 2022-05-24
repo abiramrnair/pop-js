@@ -8,7 +8,7 @@
 - manual re-render function for more user control
 ### npm
 This package is available at https://www.npmjs.com/package/sonpop-js.<br>
-and can be installed via **<< npm i sonpop-js >>**.<br>
+and can be installed via <br><br>`npm i sonpop-js`.<br>
 ### Quick Start
 If you would like get something running as fast as possible <br>
 with file structure and webpack configured, the **demo-pop-app** repository <br>
