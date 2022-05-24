@@ -39,6 +39,40 @@ export const dom = {
 		}
 		return parent;
 	},
+	sameProps: (propsOne, propsTwo) => {
+		if (propsOne === propsTwo) return true;
+		if (
+			typeof propsOne !== 'object' ||
+			typeof propsTwo !== 'object' ||
+			propsOne == null ||
+			propsTwo == null
+		) {
+			return false;
+		}
+		const keysOne = Object.keys(propsOne);
+		const keysTwo = Object.keys(propsTwo);
+		if (keysOne.length !== keysTwo.length) {
+			return false;
+		}
+		let result = true;
+		keysOne.forEach((key) => {
+			if (!keysTwo.includes(key)) {
+				result = false;
+			}
+			if (
+				typeof propsOne[key] === 'function' ||
+				typeof propsTwo[key] === 'function'
+			) {
+				if (propsOne[key].toString() !== propsTwo[key].toString()) {
+					result = false;
+				}
+			}
+			if (!dom.sameProps(propsOne[key], propsTwo[key])) {
+				result = false;
+			}
+		});
+		return result;
+	},
 	compareElements: (popNodeOne, popeNodeTwo) => {
 		return (
 			typeof popNodeOne !== typeof popeNodeTwo ||
@@ -46,8 +80,8 @@ export const dom = {
 				popNodeOne !== popeNodeTwo) ||
 			popNodeOne.tag !== popeNodeTwo.tag ||
 			(popNodeOne.props &&
-				popeNodeTwo.props &&
-				popNodeOne.props.src !== popeNodeTwo.props.src)
+				popeNodeTwo.props && !dom.sameProps(popNodeOne.props, popeNodeTwo.props)
+			)
 		);
 	},
 	updateElement: (parentNode, newNode, oldNode, index = 0) => {

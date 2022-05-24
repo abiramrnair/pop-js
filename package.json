@@ -1,6 +1,6 @@
 {
 	"name": "sonpop-js",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"description": "A simple lightweight framework for easy, fast and reactive frontend development.",
 	"main": "pop.js",
 	"repository": {
