@@ -23,7 +23,7 @@ is available at https://www.npmjs.com/package/create-pop-app. <br>
 
 ### Streamline your workflow.
 
-Spend less time creating files and writing boilerlate. Generate custom component templates quickly with the pop! JS CLI, available at https://github.com/abiramrnair/pop-js-cli.
+Spend less time creating files and writing boilerlate. Generate custom component templates quickly with the pop! JS CLI, available at https://www.npmjs.com/package/popjs-cli.
 
 ### Documentation
 
