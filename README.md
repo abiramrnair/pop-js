@@ -21,6 +21,10 @@ If you would like get something running as fast as possible <br>
 with sample file structure and webpack configured, the **create-pop-app** script <br>
 is available at https://www.npmjs.com/package/create-pop-app. <br>
 
+### Streamline your workflow.
+
+Spend less time creating files and writing boilerlate. Generate custom component templates quickly with the pop! JS CLI, available at https://www.npmjs.com/package/popjs-cli.
+
 ### Documentation
 
 A guide for pop! JS and documentation is available at https://abiramrnair.github.io/pop-js/.
