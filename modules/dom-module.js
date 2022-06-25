@@ -42,8 +42,8 @@ export const dom = {
 	sameProps: (propsOne, propsTwo) => {
 		if (propsOne === propsTwo) return true;
 		if (
-			typeof propsOne !== 'object' ||
-			typeof propsTwo !== 'object' ||
+			typeof propsOne !== constants.typeofPropsObjectIdentifier ||
+			typeof propsTwo !== constants.typeofPropsObjectIdentifier ||
 			propsOne == null ||
 			propsTwo == null
 		) {
@@ -60,8 +60,8 @@ export const dom = {
 				result = false;
 			}
 			if (
-				typeof propsOne[key] === 'function' ||
-				typeof propsTwo[key] === 'function'
+				typeof propsOne[key] === constants.typeofPropsFunctionIdentifier ||
+				typeof propsTwo[key] === constants.typeofPropsFunctionIdentifier
 			) {
 				if (propsOne[key].toString() !== propsTwo[key].toString()) {
 					result = false;
@@ -80,8 +80,8 @@ export const dom = {
 				popNodeOne !== popeNodeTwo) ||
 			popNodeOne.tag !== popeNodeTwo.tag ||
 			(popNodeOne.props &&
-				popeNodeTwo.props && !dom.sameProps(popNodeOne.props, popeNodeTwo.props)
-			)
+				popeNodeTwo.props &&
+				!dom.sameProps(popNodeOne.props, popeNodeTwo.props))
 		);
 	},
 	updateElement: (parentNode, newNode, oldNode, index = 0) => {
@@ -107,17 +107,17 @@ export const dom = {
 			}
 		}
 	},
-	initializeState: (popComponent, stateKey) => {
-		if (popComponent.render && popComponent.set && stateKey) {
-			if (!dom.state[stateKey]) {
-				dom.state[stateKey] = {};
-				popComponent.set(dom.state[stateKey]);
+	initializeState: (popComponent, accessKey) => {
+		if (popComponent.render && popComponent.set && accessKey) {
+			if (!dom.state[accessKey]) {
+				dom.state[accessKey] = {};
+				popComponent.set(dom.state[accessKey]);
 			}
 			popComponent
 				.render({ props: {}, state: {} })
 				.children.forEach((child) => {
 					if (child) {
-						dom.initializeState(child, child.stateKey);
+						dom.initializeState(child, child.accessKey);
 					}
 				});
 		}

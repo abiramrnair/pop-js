@@ -17,12 +17,12 @@ export const POP = {
 			};
 		}
 	},
-	getState: (stateKey) => {
-		if (!stateKey) {
-			throw new Error(constants.stateKeyInvalidError);
+	getState: (accessKey) => {
+		if (!accessKey) {
+			throw new Error(constants.accessKeyInvalidError);
 		}
-		if (dom.state[stateKey]) {
-			const state = { ...dom.state[stateKey] };
+		if (dom.state[accessKey]) {
+			const state = { ...dom.state[accessKey] };
 			return state;
 		}
 		return {};
@@ -43,21 +43,21 @@ export const POP = {
 		if (popComponent.render) {
 			let parent = {};
 			let componentState = {};
-			if (popComponent.set && componentProps.stateKey) {
+			if (popComponent.set && componentProps.accessKey) {
 				parent.set = popComponent.set;
-				parent.stateKey = componentProps.stateKey;
-				if (!dom.state[componentProps.stateKey]) {
-					dom.state[componentProps.stateKey] = {};
-					popComponent.set(dom.state[componentProps.stateKey]);
-					componentState = dom.state[componentProps.stateKey];
+				parent.accessKey = componentProps.accessKey;
+				if (!dom.state[componentProps.accessKey]) {
+					dom.state[componentProps.accessKey] = {};
+					popComponent.set(dom.state[componentProps.accessKey]);
+					componentState = dom.state[componentProps.accessKey];
 				} else {
-					componentState = dom.state[componentProps.stateKey];
+					componentState = dom.state[componentProps.accessKey];
 				}
 			}
-			if (popComponent.set && !componentProps.stateKey) {
-				throw new Error(constants.stateKeyMissingError);
+			if (popComponent.set && !componentProps.accessKey) {
+				throw new Error(constants.accessKeyMissingError);
 			}
-			delete componentProps.stateKey;
+			delete componentProps.accessKey;
 			const rendered = popComponent.render({
 				props: { ...componentProps },
 				state: componentState,
@@ -91,7 +91,7 @@ export const POP = {
 		dom.prevTree = newTree;
 	},
 	root: (popComponent, rootProps) => {
-		const { rootName, stateKey, componentProps } = rootProps;
+		const { rootName, accessKey, componentProps } = rootProps;
 		const root = document.createElement(constants.createRootElementTag);
 		root.id =
 			rootName && typeof rootName === constants.createPOPElementTagType
@@ -100,8 +100,8 @@ export const POP = {
 		document.body.appendChild(root);
 		dom.root = root;
 		dom.state = {};
-		dom.initializeState(popComponent, stateKey);
-		const componentState = stateKey ? POP.getState(stateKey) : {};
+		dom.initializeState(popComponent, accessKey);
+		const componentState = accessKey ? POP.getState(accessKey) : {};
 		dom.prevTree = popComponent.render({
 			props: { ...componentProps },
 			state: componentState,

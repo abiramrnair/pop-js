@@ -1,4 +1,7 @@
 export const constants = {
+	accessKeyInvalidError: "accessKey must be a valid existing key",
+	accessKeyMissingError:
+		"accessKey must be passed inside props argument for a popComponent utilizing state.",
 	createPOPElementTagType: "string",
 	createRootElementDefaultId: "root",
 	createRootElementTag: "div",
@@ -7,9 +10,8 @@ export const constants = {
 	popElementIdIdentifier: "id=",
 	popObjectTagSeparator: "|",
 	refreshDOMDefaultAction: "click",
-	stateKeyInvalidError: "stateKey must be a valid existing key",
-	stateKeyMissingError:
-		"stateKey must be passed inside props argument for a popComponent utilizing state.",
+	typeofPropsFunctionIdentifier: "function",
+	typeofPropsObjectIdentifier: "object",
 };
 
 export default constants;
