@@ -136,6 +136,31 @@ export const dom = {
 		}
 		return [];
 	},
+	getComponentStateKey: (loopKey) => {
+		const location = new Error();
+		const formattedLoopKey = String(loopKey);
+		const stack = location.stack.split("\n");
+		const isLooped =
+			stack.join("").includes(constants.forLoopIdentifier) ||
+			stack.join("").includes(constants.mapLoopIdentifier);
+		if (isLooped && !formattedLoopKey) {
+			throw new Error(constants.popComponentUniqueKeyError);
+		}
+		let cutOffIndex;
+		for (let i = stack.length - 1; i >= 0; i--) {
+			if (stack[i].includes(constants.renderFunctionIdentifer)) {
+				cutOffIndex = i;
+				break;
+			}
+		}
+		const key = stack[2].includes("Object.root")
+			? stack.join("").replace(constants.stateKeyFilterString, "")
+			: stack
+					.slice(0, cutOffIndex + 1)
+					.join("")
+					.replace(constants.stateKeyFilterString, "");
+		return `${key}${formattedLoopKey ? formattedLoopKey : ""}`;
+	},
 };
 
 export default dom;
