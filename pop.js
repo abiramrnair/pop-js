@@ -3,6 +3,15 @@ import dom from "./modules/dom-module";
 
 export const POP = {
 	create: (elementTag, elementChildren = [], elementProps = {}) => {
+		const children =
+			Array.isArray(elementProps) && elementProps.length
+				? elementProps
+				: elementChildren;
+		children.forEach((value, index) => {
+			if (!value) {
+				children[index] = " ";
+			}
+		});
 		if (typeof elementTag === constants.createPOPElementTagType) {
 			return {
 				tag: elementTag,
@@ -10,10 +19,7 @@ export const POP = {
 					!Array.isArray(elementChildren) && Object.keys(elementChildren).length
 						? elementChildren
 						: elementProps,
-				children:
-					Array.isArray(elementProps) && elementProps.length
-						? elementProps
-						: elementChildren,
+				children,
 			};
 		}
 	},
@@ -37,25 +43,43 @@ export const POP = {
 			!Array.isArray(popComponentChildren)
 				? popComponentChildren
 				: popComponentProps;
-		if (popComponent.render) {
-			let parent = {};
-			let componentState = {};
-			const componentStateKey = dom.getComponentStateKey(componentProps.key);
-			if (popComponent.set) {
-				parent.set = popComponent.set;
-				parent.componentStateKey = componentStateKey;
-				if (!dom.state[componentStateKey]) {
-					dom.state[componentStateKey] = {};
-					popComponent.set(dom.state[componentStateKey]);
-					componentState = dom.state[componentStateKey];
-					dom.state[componentProps.accessKey] = componentState;
-				} else {
-					componentState = dom.state[componentStateKey];
-					dom.state[componentProps.accessKey] = componentState;
-				}
+		let parent = {};
+		let componentState = {};
+		const componentStateKey = dom.getComponentStateKey(componentProps.key);
+		dom.stateCheckSet.add(componentStateKey);
+		if (componentProps.accessKey) {
+			dom.stateCheckSet.add(componentProps.accessKey);
+		}
+		const expandedComponent =
+			typeof popComponent === constants.typeofPropsFunctionIdentifier &&
+			!dom.state[componentStateKey]
+				? popComponent({ props: { ...componentProps } })
+				: typeof popComponent === constants.typeofPropsFunctionIdentifier
+				? dom.renderStore[componentStateKey].expandedFn
+				: popComponent;
+		if (!dom.state[componentStateKey]) {
+			dom.state[componentStateKey] = {};
+			dom.renderStore[componentStateKey] = {};
+			dom.renderStore[componentStateKey].expandedFn =
+				typeof popComponent === constants.typeofPropsFunctionIdentifier
+					? popComponent({ props: { ...componentProps } })
+					: popComponent;
+			if (expandedComponent.set) {
+				parent.set = expandedComponent.set;
+				expandedComponent.set({
+					props: { ...componentProps },
+					state: dom.state[componentStateKey],
+				});
 			}
+			componentState = dom.state[componentStateKey];
+			dom.state[componentProps.accessKey] = componentState;
+		}
+		if (expandedComponent.render) {
+			parent.componentStateKey = componentStateKey;
+			componentState = dom.state[componentStateKey];
+			dom.state[componentProps.accessKey] = componentState;
 			delete componentProps.accessKey;
-			const rendered = popComponent.render({
+			const rendered = expandedComponent.render({
 				props: { ...componentProps },
 				state: componentState,
 			});
@@ -82,10 +106,12 @@ export const POP = {
 		}
 	},
 	refresh: () => {
+		dom.stateCheckSet.clear();
 		const newTree = dom.renderFn();
 		newTree.children = dom.filterValidPopObjects(newTree);
 		dom.updateElement(dom.root, newTree, dom.prevTree);
 		dom.prevTree = newTree;
+		dom.cleanState();
 	},
 	root: (popComponent, rootProps = {}) => {
 		const { rootName, accessKey, componentProps } = rootProps;
@@ -96,21 +122,27 @@ export const POP = {
 				: constants.createRootElementDefaultId;
 		document.body.appendChild(root);
 		dom.root = root;
-		dom.state = {};
+		dom.init();
 		const componentStateKey = accessKey
 			? accessKey
 			: dom.getComponentStateKey();
-		dom.initializeState(popComponent, componentStateKey);
+		const isComponentFunction =
+			typeof popComponent === constants.typeofPropsFunctionIdentifier;
+		const expandedComponent =
+			isComponentFunction && !dom.state[componentStateKey]
+				? popComponent({ props: { ...componentProps } })
+				: popComponent;
+		dom.initializeState(expandedComponent, componentStateKey, componentProps);
 		const componentState = componentStateKey
 			? POP.getState(componentStateKey)
 			: {};
-		dom.prevTree = popComponent.render({
+		dom.prevTree = expandedComponent.render({
 			props: { ...componentProps },
 			state: componentState,
 		});
 		dom.prevTree.children = dom.filterValidPopObjects(dom.prevTree);
 		dom.renderFn = () =>
-			popComponent.render({
+			expandedComponent.render({
 				props: { ...componentProps },
 				state: componentState,
 			});

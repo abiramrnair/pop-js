@@ -1,6 +1,11 @@
 import constants from "./constants-module";
 
 export const dom = {
+	init: () => {
+		dom.state = {};
+		dom.renderStore = {};
+		dom.stateCheckSet = new Set();
+	},
 	generateElement: (popObject) => {
 		if (typeof popObject === constants.createPOPElementTagType) {
 			return document.createTextNode(popObject);
@@ -41,6 +46,7 @@ export const dom = {
 	},
 	sameProps: (propsOne, propsTwo) => {
 		if (propsOne === propsTwo) return true;
+		if (propsOne.toString() === propsTwo.toString()) return true;
 		if (
 			typeof propsOne !== constants.typeofPropsObjectIdentifier ||
 			typeof propsTwo !== constants.typeofPropsObjectIdentifier ||
@@ -107,11 +113,18 @@ export const dom = {
 			}
 		}
 	},
-	initializeState: (popComponent, accessKey) => {
+	initializeState: (popComponent, accessKey, componentProps = {}) => {
 		if (popComponent.render && popComponent.set && accessKey) {
 			if (!dom.state[accessKey]) {
 				dom.state[accessKey] = {};
-				popComponent.set(dom.state[accessKey]);
+				Object.keys(componentProps).length
+					? popComponent.set({
+							props: { ...componentProps },
+							state: dom.state[accessKey],
+					  })
+					: popComponent.set({
+							state: dom.state[accessKey],
+					  });
 			}
 			popComponent
 				.render({ props: {}, state: {} })
@@ -153,13 +166,20 @@ export const dom = {
 				break;
 			}
 		}
-		const key = stack[2].includes("Object.root")
+		const key = stack[2].includes(constants.rootFunctionIdentifier)
 			? stack.join("").replace(constants.stateKeyFilterString, "")
 			: stack
 					.slice(0, cutOffIndex + 1)
 					.join("")
 					.replace(constants.stateKeyFilterString, "");
 		return `${key}${formattedLoopKey ? formattedLoopKey : ""}`;
+	},
+	cleanState: () => {
+		Object.keys(dom.state).forEach((key) => {
+			if (!dom.stateCheckSet.has(key)) {
+				delete dom.state[key];
+			}
+		});
 	},
 };
 
