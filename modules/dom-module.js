@@ -5,6 +5,12 @@ export const dom = {
 		dom.state = {};
 		dom.renderStore = {};
 		dom.stateCheckSet = new Set();
+		window.addEventListener("hashchange", () => {
+			const path = window.location.href.split("#!")[1];
+			if (dom.routes && dom.currPath !== path) {
+				window.location.reload();
+			}
+		});
 	},
 	generateElement: (popObject) => {
 		if (typeof popObject === constants.createPOPElementTagType) {
@@ -113,18 +119,13 @@ export const dom = {
 			}
 		}
 	},
-	initializeState: (popComponent, accessKey, componentProps = {}) => {
+	initializeState: (popComponent, accessKey) => {
 		if (popComponent.render && popComponent.set && accessKey) {
 			if (!dom.state[accessKey]) {
 				dom.state[accessKey] = {};
-				Object.keys(componentProps).length
-					? popComponent.set({
-							props: { ...componentProps },
-							state: dom.state[accessKey],
-					  })
-					: popComponent.set({
-							state: dom.state[accessKey],
-					  });
+				popComponent.set({
+					state: dom.state[accessKey],
+				});
 			}
 			popComponent
 				.render({ props: {}, state: {} })

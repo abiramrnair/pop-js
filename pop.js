@@ -114,7 +114,7 @@ export const POP = {
 		dom.cleanState();
 	},
 	root: (popComponent, rootProps = {}) => {
-		const { rootName, accessKey, componentProps } = rootProps;
+		const { rootName, accessKey, popRoutes } = rootProps;
 		const root = document.createElement(constants.createRootElementTag);
 		root.id =
 			rootName && typeof rootName === constants.createPOPElementTagType
@@ -122,28 +122,43 @@ export const POP = {
 				: constants.createRootElementDefaultId;
 		document.body.appendChild(root);
 		dom.root = root;
+		const hasRoutes =
+			popRoutes && !Array.isArray(popRoutes) && Object.keys(popRoutes).length
+				? true
+				: false;
+		dom.routes = hasRoutes ? popRoutes : null;
+		let componentToRender;
+		const path = window.location.href.split("#!")[1];
+		const defaultPath = hasRoutes ? Object.keys(popRoutes)[0] : null;
+		if (!path && hasRoutes) {
+			window.location.href += `#!${defaultPath}`;
+		}
+		if (hasRoutes && path && popRoutes[path]) {
+			componentToRender = popRoutes[path];
+			dom.currPath = path;
+		} else {
+			componentToRender = popComponent;
+		}
 		dom.init();
 		const componentStateKey = accessKey
 			? accessKey
 			: dom.getComponentStateKey();
 		const isComponentFunction =
-			typeof popComponent === constants.typeofPropsFunctionIdentifier;
+			typeof componentToRender === constants.typeofPropsFunctionIdentifier;
 		const expandedComponent =
 			isComponentFunction && !dom.state[componentStateKey]
-				? popComponent({ props: { ...componentProps } })
-				: popComponent;
-		dom.initializeState(expandedComponent, componentStateKey, componentProps);
+				? componentToRender()
+				: componentToRender;
+		dom.initializeState(expandedComponent, componentStateKey);
 		const componentState = componentStateKey
 			? POP.getState(componentStateKey)
 			: {};
 		dom.prevTree = expandedComponent.render({
-			props: { ...componentProps },
 			state: componentState,
 		});
 		dom.prevTree.children = dom.filterValidPopObjects(dom.prevTree);
 		dom.renderFn = () =>
 			expandedComponent.render({
-				props: { ...componentProps },
 				state: componentState,
 			});
 		dom.updateElement(root, dom.prevTree);
