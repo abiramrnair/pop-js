@@ -9,6 +9,7 @@
 - global state access
 - efficient and reactive element rendering
 - manual re-render function for more user control
+- client side routing
 
 ### npm
 
