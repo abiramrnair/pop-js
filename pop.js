@@ -7,11 +7,13 @@ export const POP = {
 			Array.isArray(elementProps) && elementProps.length
 				? elementProps
 				: elementChildren;
-		children.forEach((value, index) => {
-			if (!value) {
-				children[index] = " ";
-			}
-		});
+		if (children && Array.isArray(children) && children.length) {
+			children.forEach((value, index) => {
+				if (!value) {
+					children[index] = " ";
+				}
+			});
+		}
 		if (typeof elementTag === constants.createPOPElementTagType) {
 			return {
 				tag: elementTag,
