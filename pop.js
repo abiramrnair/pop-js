@@ -47,7 +47,10 @@ export const POP = {
 				: popComponentProps;
 		let parent = {};
 		let componentState = {};
-		const componentStateKey = dom.getComponentStateKey(componentProps.key);
+		const componentStateKey = dom.getComponentStateKey(
+			popComponent,
+			componentProps.key
+		);
 		dom.stateCheckSet.add(componentStateKey);
 		if (componentProps.accessKey) {
 			dom.stateCheckSet.add(componentProps.accessKey);

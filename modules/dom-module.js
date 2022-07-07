@@ -150,14 +150,18 @@ export const dom = {
 		}
 		return [];
 	},
-	getComponentStateKey: (loopKey) => {
+	getComponentStateKey: (component, loopKey) => {
+		const hasSet =
+			typeof component === constants.typeofPropsFunctionIdentifier
+				? component() && component().set
+				: component && component.set;
 		const location = new Error();
-		const formattedLoopKey = String(loopKey);
+		const formattedLoopKey = loopKey ? String(loopKey) : null;
 		const stack = location.stack.split("\n");
 		const isLooped =
 			stack.join("").includes(constants.forLoopIdentifier) ||
 			stack.join("").includes(constants.mapLoopIdentifier);
-		if (isLooped && !formattedLoopKey) {
+		if (hasSet && isLooped && !formattedLoopKey) {
 			throw new Error(constants.popComponentUniqueKeyError);
 		}
 		let cutOffIndex;
