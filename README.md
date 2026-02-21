@@ -13,8 +13,8 @@
 
 ### npm
 
-This package is available at https://www.npmjs.com/package/sonpop-js.<br>
-and can be installed via <br><br>`npm i sonpop-js`.<br>
+This package is available at https://www.npmjs.com/package/pop-js.<br>
+and can be installed via <br><br>`npm i pop-js`.<br>
 
 ### Quick Start
 

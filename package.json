@@ -1,5 +1,5 @@
 {
-	"name": "sonpop-js",
+	"name": "pop-js",
 	"version": "1.1.4",
 	"description": "A simple lightweight framework for easy, fast and reactive frontend development.",
 	"main": "pop.js",
